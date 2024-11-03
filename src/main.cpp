@@ -12,6 +12,7 @@
 #define eeprom_password_address  51
 #define eeprom_token_address  101
 #define LED_1 18
+#define LED_2 5
 #define DHT_PIN 33
 DHTesp dht;
 char ssid[] = "VIETTEL";     // your network SSID (name)
@@ -74,7 +75,18 @@ void setLEDState(AsyncWebServerRequest *request){
           }
         }
       }
-
+if (request->hasParam("LED1state")){
+        String requestedLED1State = request->getParam("LED1state")->value();
+        Serial.printf("Request set LED state to %s\n",requestedLED1State);
+        if(requestedLED1State == "1"){
+          digitalWrite(5,HIGH);
+        }
+        else{
+          if(requestedLED1State == "2"){
+            digitalWrite(5,LOW);
+          }
+        }
+      }
       int LED_pin_value = digitalRead(LED_1);
       Serial.println(LED_pin_value);
       if (LED_pin_value == 0)
@@ -266,7 +278,9 @@ void setup() {
   dht.setup(DHT_PIN, DHTesp::DHT11);
   pinMode(DHT_PIN,INPUT);
   pinMode(LED_1,OUTPUT);
+  pinMode(LED_2,OUTPUT);
   digitalWrite(LED_1, HIGH); 
+   digitalWrite(LED_2, HIGH); 
   // Start server
   setupApi();
 }
